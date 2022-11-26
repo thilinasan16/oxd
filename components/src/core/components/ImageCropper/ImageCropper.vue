@@ -1,6 +1,7 @@
 <template>
   <cropper
     class="cropper"
+    ref="cropper"
     :src="image"
     :stencil-component="$options.components.CircleStencil"
     :stencil-props="{
@@ -22,8 +23,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
 import {Cropper, CircleStencil} from 'vue-advanced-cropper';
+
 export default defineComponent({
   name: 'ImageCropper',
   components: {
@@ -48,6 +50,7 @@ export default defineComponent({
 
   setup(props, {emit}) {
     const croppedImage = ref('');
+    const cropper = ref(null);
     const change = ({
       coordinates,
       canvas,
@@ -58,9 +61,16 @@ export default defineComponent({
       croppedImage.value = canvas.toDataURL();
       emit('change', croppedImage.value);
     };
+
+    const zoomIn = (factor: Number) => {
+      cropper.value.zoom(factor);
+    };
+
     return {
       croppedImage,
       change,
+      zoomIn,
+      cropper,
     };
   },
 });
